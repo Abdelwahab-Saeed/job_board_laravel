@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\ApplicationController;
 
 
 Route::get('/user', function (Request $request) {
@@ -23,4 +24,8 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::apiResource('categories', CategoryController::class);
 
 Route::apiResource('jobs', JobController::class);
+
+ Route::get('/applications/me', [ApplicationController::class, 'myApplications']);
+Route::put('/applications/{id}/status', [ApplicationController::class, 'updateStatus']);
+Route::delete('/applications/{id}/cancel', [ApplicationController::class, 'cancel']);
 
