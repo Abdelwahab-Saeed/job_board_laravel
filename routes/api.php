@@ -30,10 +30,9 @@ Route::apiResource('jobs', JobController::class);
  Route::get('/applications/me', [ApplicationController::class, 'myApplications']);
 Route::put('/applications/{id}/status', [ApplicationController::class, 'updateStatus']);
 Route::delete('/applications/{id}/cancel', [ApplicationController::class, 'cancel']);
-
-Route::post('/jobs/{id}/comments', [CommentController::class, 'store']);
 Route::get('/jobs/{id}/comments', [CommentController::class, 'index']);
-Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
 Route::get('/jobs/{jobId}/comments/user/{userId}', [CommentController::class, 'indexForUser']);
-
-
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/jobs/{jobId}/comments', [CommentController::class, 'store']);
+    Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
+});

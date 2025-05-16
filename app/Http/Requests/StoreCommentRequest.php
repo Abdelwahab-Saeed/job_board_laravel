@@ -11,13 +11,14 @@ class StoreCommentRequest extends FormRequest
         return true; 
     }
 
-    public function rules(): array
-    {
-        return [
-            'user_id' => 'required|exists:users,id',
-            'content' => 'required|string|max:1000',
-        ];
-    }
+
+  public function rules(): array
+{
+    return [
+        'content' => 'required|string|max:1000',
+    ];
+}
+
 
     public function messages(): array
     {

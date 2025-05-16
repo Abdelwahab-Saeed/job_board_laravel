@@ -32,4 +32,9 @@ class User extends Authenticatable
             'phone' => 'string',
         ];
     }
+    public function comments()
+{
+    return $this->hasMany(Comment::class);
+}
+
 }
