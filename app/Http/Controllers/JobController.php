@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Carbon\Carbon;
+
+
 use App\Http\Requests\StoreJobRequest;
 use App\Http\Requests\UpdateJobRequest;
 use App\Models\Job;
@@ -140,5 +144,55 @@ class JobController extends Controller
             'jobs' => $jobsData,
         ]);
     }
+
+    public function filter(Request $request)
+{
+    $query = Job::query();
+
+    if ($request->filled('keyword')) {
+        $query->where(function ($q) use ($request) {
+            $q->where('title', 'like', '%' . $request->keyword . '%')
+              ->orWhere('description', 'like', '%' . $request->keyword . '%');
+        });
+    }
+
+   
+    if ($request->filled('location')) {
+        $query->where('location', 'like', '%' . $request->location . '%');
+    }
+
+  
+    if ($request->filled('experience')) {
+        $query->where('experience_level', $request->experience);
+    }
+
+  
+    if ($request->filled('category_id')) {
+        $query->where('category_id', $request->category_id);
+    }
+
+   
+    if ($request->filled('salary_min')) {
+        $query->where('salary', '>=', $request->salary_min);
+    }
+    
+    if ($request->filled('salary_max')) {
+        $query->where('salary', '<=', $request->salary_max);
+    }
+    
+
+  
+    if ($request->filled('posted_within_days')) {
+        $date = Carbon::now()->subDays($request->posted_within_days);
+        $query->where('created_at', '>=', $date);
+    }
+
+    $jobs = $query->latest()->get();
+
+    return response()->json([
+        'count' => $jobs->count(),
+        'jobs' => $jobs
+    ]);
+}
     
 }

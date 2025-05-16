@@ -11,6 +11,9 @@ use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\PaymentController;
 
 
+Route::post('/jobs/filter', [JobController::class, 'filter']);
+
+
 Route::get('/employers/{id}/jobs/analytics', [JobController::class, 'analytics']);
 
 
@@ -39,7 +42,7 @@ Route::apiResource('categories', CategoryController::class);
 
 Route::apiResource('jobs', JobController::class);
 
-// Route::post('/jobs/{jobId}/apply-test', [ApplicationController::class, 'apply']);
+
 
 
 
