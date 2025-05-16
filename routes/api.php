@@ -10,6 +10,10 @@ use App\Http\Controllers\ApplicationController;
 
 use App\Http\Controllers\PaymentController;
 
+
+Route::get('/employers/{id}/jobs/analytics', [JobController::class, 'analytics']);
+
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/payments/{job_id}', [PaymentController::class, 'store']);
     Route::put('/payments/{payment}', [PaymentController::class, 'update']);

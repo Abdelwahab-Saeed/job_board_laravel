@@ -112,4 +112,33 @@ class JobController extends Controller
             'message' => 'Job deleted successfully',
         ]);
     }
+    public function analytics($employerId)
+    {
+      
+       
+        $jobs = Job::where('employer_id', $employerId)->withCount('applications')->get();
+    
+        $totalJobs = $jobs->count();
+        $totalApplications = $jobs->sum('applications_count');
+        $averageApplications = $totalJobs > 0 ? round($totalApplications / $totalJobs, 2) : 0;
+    
+        $jobsSorted = $jobs->sortByDesc('applications_count')->values();
+    
+       
+        $jobsData = $jobsSorted->map(function ($job) {
+            return [
+                'id' => $job->id,
+                'title' => $job->title,
+                'applications_count' => $job->applications_count,
+            ];
+        });
+    
+        return response()->json([
+            'total_jobs' => $totalJobs,
+            'total_applications' => $totalApplications,
+            'average_applications_per_job' => $averageApplications,
+            'jobs' => $jobsData,
+        ]);
+    }
+    
 }
