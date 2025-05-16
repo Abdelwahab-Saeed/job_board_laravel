@@ -20,7 +20,7 @@ class Job extends Model
         'location',
         'experience_level',
         'work_type',
-        'salary_range',
+        'salary',
         'benefits',
         'deadline',
         'status',
