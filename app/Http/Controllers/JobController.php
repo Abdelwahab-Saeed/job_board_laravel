@@ -123,6 +123,7 @@ class JobController extends Controller
                 "success" => false,
                 'message' => 'You are not authorized to delete this job',
             ], 403);
+            
         }
 
         $job->delete();
