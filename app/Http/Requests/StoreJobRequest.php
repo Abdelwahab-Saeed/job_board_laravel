@@ -52,10 +52,10 @@ class StoreJobRequest extends FormRequest
             'location' => ['required', 'string', 'max:255'],
             'experience_level' => ['required', 'string'],
             'work_type' => ['required', 'string', Rule::in(['remote', 'onsite', 'hybrid'])],
-            'salary_range' => ['required', 'string', 'max:255'],
+            'salary' => ['required', 'numeric', 'min:0'],
             'benefits' => ['required', 'string'],
             'deadline' => ['required', 'date', 'after:today'],
-            'status' => ['required', 'string', Rule::in(['draft', 'published', 'closed'])],
+            'status' => ['sometimes', 'string', Rule::in(['pending', 'published', 'closed'])],
             'employer_id' => ['sometimes', 'integer', 'exists:users,id'],
         ];
     }
@@ -111,9 +111,9 @@ class StoreJobRequest extends FormRequest
             'work_type.in' => 'The work type must be one of: remote, onsite, hybrid',
             
             
-            'salary_range.required' => 'The salary range is required',
-            'salary_range.string' => 'The salary range must be a text value',
-            'salary_range.max' => 'The salary range cannot exceed 255 characters',
+            'salary.required' => 'The salary is required',
+            'salary.numeric' => 'The salary must be a number',
+            'salary.min' => 'The salary must be at least 0',
             
             
             'benefits.required' => 'The job benefits are required',
@@ -123,11 +123,6 @@ class StoreJobRequest extends FormRequest
             'deadline.required' => 'The application deadline is required',
             'deadline.date' => 'The deadline must be a valid date',
             'deadline.after' => 'The deadline must be a date after today',
-            
-            
-            'status.required' => 'The job status is required',
-            'status.string' => 'The status must be a text value',
-            'status.in' => 'The status must be one of: draft, published, closed',
             
             
             'employer_id.required' => 'The employer ID is required',

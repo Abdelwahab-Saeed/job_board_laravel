@@ -52,6 +52,7 @@ class UpdateJobRequest extends FormRequest
             'location' => ['sometimes', 'required', 'string', 'max:255'],
             'experience_level' => ['sometimes', 'required', 'string'],
             'work_type' => ['sometimes', 'required', 'string', Rule::in(['remote', 'onsite', 'hybrid'])],
+            'salary' => ['sometimes', 'required', 'numeric', 'min:0'],
             'salary_range' => ['sometimes', 'required', 'string', 'max:255'],
             'benefits' => ['sometimes', 'required', 'string'],
             'deadline' => ['sometimes', 'required', 'date', 'after:today'],
@@ -111,9 +112,10 @@ class UpdateJobRequest extends FormRequest
             'work_type.in' => 'The work type must be one of: remote, onsite, hybrid',
             
             
-            'salary_range.required' => 'The salary range is required',
-            'salary_range.string' => 'The salary range must be a text value',
-            'salary_range.max' => 'The salary range cannot exceed 255 characters',
+            'salary.required' => 'The salary is required',
+            'salary.numeric' => 'The salary must be a number',
+            'salary.min' => 'The salary must be at least 0',
+
             
            
             'benefits.required' => 'The job benefits are required',
