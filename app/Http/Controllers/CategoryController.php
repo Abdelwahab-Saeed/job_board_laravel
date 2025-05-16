@@ -100,6 +100,7 @@ class CategoryController extends Controller
     public function destroy(string $id)
     {
         $category = Category::find($id);
+
         if(!$category) {
             return response()->json([
                 'message' => 'Category not found',
@@ -109,6 +110,7 @@ class CategoryController extends Controller
         $category->delete();
 
         return response()->json([
+            "success" => true,
             'message' => 'Category deleted successfully',
         ]);
     }
