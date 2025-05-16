@@ -10,6 +10,22 @@ use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\CommentController;
 
 
+use App\Http\Controllers\PaymentController;
+
+
+Route::post('/jobs/filter', [JobController::class, 'filter']);
+
+
+Route::get('/employers/{id}/jobs/analytics', [JobController::class, 'analytics']);
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/payments/{job_id}', [PaymentController::class, 'store']);
+    Route::put('/payments/{payment}', [PaymentController::class, 'update']);
+    Route::delete('/payments/{payment}', [PaymentController::class, 'destroy']);
+});
+
+
 
 
 Route::get('/user', function (Request $request) {
@@ -44,12 +60,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/jobs/{jobId}/comments', [CommentController::class, 'store']);
     Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
 });
-// Route::post('/jobs/{jobId}/apply-test', [ApplicationController::class, 'apply']);
+
 
 
 
 Route::middleware('auth:sanctum')->group(function () {
-    // تطبيق الوظيفة
+   
     Route::post('/jobs/{jobId}/apply', [ApplicationController::class, 'apply']);
     
     Route::get('/applications/me', [ApplicationController::class, 'myApplications']);
