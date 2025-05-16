@@ -32,10 +32,10 @@ class Job extends Model
     }
 
     public function employer() {
-        return $this->belongsTO(Employer::class);
+        return $this->belongsTo(User::class, 'employer_id', 'id');
     }
 
     public function category() {
-        return $this->belongsTO(Category::class);
+        return $this->belongsTo(Category::class);
     }
 }

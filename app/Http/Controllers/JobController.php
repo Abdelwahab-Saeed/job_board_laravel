@@ -15,7 +15,7 @@ class JobController extends Controller
     {
         //
         
-        $jobs = Job::with('comments')->get();
+        $jobs = Job::with('comments', 'category', 'employer')->get();
 
         if($jobs->count() == 0){
             return response()->json(
@@ -37,8 +37,11 @@ class JobController extends Controller
     public function store(StoreJobRequest $request)
     {
         //
-        $request['employer_id'] = auth()->user()->id;
-        $job = Job::create($request->all());
+        $jobData = array_merge($request->all(), [
+            'employer_id' => auth()->id()
+        ]);
+
+        $job = Job::create($jobData);
 
         return response()->json([
             "success" => true,
@@ -53,7 +56,7 @@ class JobController extends Controller
     public function show(string $id)
     {
         //
-        $job = Job::find($id);
+        $job = Job::with('comments', 'category', 'employer')->find($id);
 
         if(!$job) {
             return response()->json([
@@ -83,6 +86,14 @@ class JobController extends Controller
             ], 404);
         }
 
+        
+        if(auth()->user()->id !== $job->employer_id) {
+            return response()->json([
+                "success" => false,
+                'message' => 'You are not authorized to update this job',
+            ], 403);
+        }
+
         $job->update($request->all());
 
         return response()->json([
@@ -105,6 +116,13 @@ class JobController extends Controller
                 "success" => false,
                 'message' => 'Job not found',
             ], 404);
+        }
+
+        if(auth()->user()->id !== $job->employer_id) {
+            return response()->json([
+                "success" => false,
+                'message' => 'You are not authorized to delete this job',
+            ], 403);
         }
 
         $job->delete();

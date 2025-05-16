@@ -56,7 +56,7 @@ class StoreJobRequest extends FormRequest
             'benefits' => ['required', 'string'],
             'deadline' => ['required', 'date', 'after:today'],
             'status' => ['required', 'string', Rule::in(['draft', 'published', 'closed'])],
-            'employer_id' => ['required', 'integer', 'exists:users,id'],
+            'employer_id' => ['sometimes', 'integer', 'exists:users,id'],
         ];
     }
 
