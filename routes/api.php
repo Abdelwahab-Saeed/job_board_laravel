@@ -7,6 +7,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\CommentController;
+
 
 
 Route::get('/user', function (Request $request) {
@@ -28,4 +30,10 @@ Route::apiResource('jobs', JobController::class);
  Route::get('/applications/me', [ApplicationController::class, 'myApplications']);
 Route::put('/applications/{id}/status', [ApplicationController::class, 'updateStatus']);
 Route::delete('/applications/{id}/cancel', [ApplicationController::class, 'cancel']);
+
+Route::post('/jobs/{id}/comments', [CommentController::class, 'store']);
+Route::get('/jobs/{id}/comments', [CommentController::class, 'index']);
+Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
+Route::get('/jobs/{jobId}/comments/user/{userId}', [CommentController::class, 'indexForUser']);
+
 

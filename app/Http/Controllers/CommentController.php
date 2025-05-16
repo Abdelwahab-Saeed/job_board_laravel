@@ -1,66 +1,64 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreCommentRequest;
-use App\Http\Requests\UpdateCommentRequest;
 use App\Models\Comment;
+use App\Models\Job;
+use Illuminate\Http\Request;
+use App\Http\Requests\StoreCommentRequest;
+
 
 class CommentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+public function store(StoreCommentRequest $request, $jobId)
+{
+    $comment = Comment::create([
+        'job_id' => $jobId,
+        'user_id' => $request->user_id,
+        'content' => $request->content,
+    ]);
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    $comment->load('user'); 
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreCommentRequest $request)
-    {
-        //
-    }
+    return response()->json([
+        'message' => 'Comment added successfully',
+        'data' => $comment
+    ], 201);
+}
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Comment $comment)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Comment $comment)
+    public function index($jobId)
     {
-        //
-    }
+        $comments = Comment::where('job_id', $jobId)
+                    ->with('user:id,name')
+                    ->get();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateCommentRequest $request, Comment $comment)
-    {
-        //
+        return response()->json([
+            'data' => $comments
+        ]);
     }
+    public function indexForUser($jobId, $userId)
+{
+    $comments = Comment::where('job_id', $jobId)
+                ->where('user_id', $userId)
+                ->with('user:id,name')
+                ->get();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Comment $comment)
+    return response()->json([
+        'data' => $comments
+    ]);
+}
+
+
+    public function destroy($id)
     {
-        //
+        $comment = Comment::find($id);
+
+        if (!$comment) {
+            return response()->json(['message' => 'Comment not found'], 404);
+        }
+
+        $comment->delete();
+
+        return response()->json(['message' => 'Comment deleted successfully']);
     }
 }
