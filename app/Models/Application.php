@@ -1,26 +1,32 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use App\Models\Job;
 
 class Application extends Model
 {
-     use HasFactory;
+    use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'candidate_id',
         'job_id',
-        'candidate_resume',
+        'resume_snapshot',
+        'cover_letter',
+        'contact_email',
+        'contact_phone',
         'status',
     ];
 
-    public function user() {
-        return $this->belongsTo(User::class);
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'candidate_id');
     }
 
-    public function job() {
+    public function job()
+    {
         return $this->belongsTo(Job::class);
     }
 }
