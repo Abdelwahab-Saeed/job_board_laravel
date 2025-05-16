@@ -5,62 +5,174 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreApplicationRequest;
 use App\Http\Requests\UpdateApplicationRequest;
 use App\Models\Application;
+use Illuminate\Http\Request;
 
 class ApplicationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function apply(StoreApplicationRequest $request, $jobId)
     {
-        //
+        $user = auth()->user(); 
+
+        $existing = Application::where('candidate_id', $user->id)
+            ->where('job_id', $jobId)
+            ->first();
+
+        if ($existing) {
+            return response()->json(['message' => 'You already applied to this job.'], 409);
+        }
+
+        $application = Application::create([
+            'candidate_id' => $user->id,
+            'job_id' => $jobId,
+            'resume_snapshot' => $request->resume_snapshot,
+            'cover_letter' => $request->cover_letter,
+            'contact_email' => $request->contact_email,
+            'contact_phone' => $request->contact_phone,
+            'status' => 'pending', 
+        ]);
+
+        return response()->json([
+            'message' => 'Application submitted successfully.',
+            'data' => $application
+        ], 201);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function cancel($id)
     {
-        //
+        $application = Application::find($id);  
+
+        if (!$application || $application->candidate_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized or application not found.'], 403);
+        }
+
+        $application->delete();  
+
+        return response()->json(['message' => 'Application canceled successfully.']);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreApplicationRequest $request)
+    public function myApplications()
     {
-        //
+        $applications = auth()->user()->applications()->with('job')->get();
+
+        return response()->json([
+            'data' => $applications
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Application $application)
+    public function updateStatus(UpdateApplicationRequest $request, $id)
     {
-        //
-    }
+        $application = Application::with('job')->find($id);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Application $application)
-    {
-        //
-    }
+        if (!$application) {
+            return response()->json(['message' => 'Application not found'], 404);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateApplicationRequest $request, Application $application)
-    {
-        //
-    }
+        if ($application->job->employer_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized.'], 403);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Application $application)
-    {
-        //
+        $application->status = $request->status;
+        $application->save();
+
+        return response()->json([
+            'message' => 'Application status updated.',
+            'data' => $application
+        ]);
     }
 }
+
+
+
+
+
+
+
+// namespace App\Http\Controllers;
+
+// use App\Models\Application;
+// use App\Models\Job;
+// use Illuminate\Http\Request;
+// use App\Http\Requests\StoreApplicationRequest;
+// use App\Http\Requests\UpdateApplicationRequest;
+
+// class ApplicationController extends Controller
+// {
+//     public function apply(StoreApplicationRequest $request, $jobId)
+//     {
+//         $userId = $request->candidate_id; 
+
+//         $existing = Application::where('candidate_id', $userId)
+//             ->where('job_id', $jobId)
+//             ->first();
+
+//         if ($existing) {
+//             return response()->json(['message' => 'You already applied to this job.'], 409);
+//         }
+
+//         $application = Application::create([
+//             'candidate_id' => $userId,
+//             'job_id' => $jobId,
+//             'resume_snapshot' => $request->resume_snapshot,
+//             'cover_letter' => $request->cover_letter,
+//             'contact_email' => $request->contact_email,
+//             'contact_phone' => $request->contact_phone,
+//             'status' => 'pending',
+//         ]);
+
+//         return response()->json([
+//             'message' => 'Application submitted successfully.',
+//             'data' => $application
+//         ], 201);
+//     }
+
+//     public function myApplications(Request $request)
+//     {
+//         $candidateId = $request->query('candidate_id', 1); 
+
+//         $applications = Application::where('candidate_id', $candidateId)
+//             ->with('job')
+//             ->get();
+
+//         return response()->json([
+//             'data' => $applications
+//         ]);
+//     }
+
+//     public function cancel($id, Request $request)
+//     {
+//         $candidateId = $request->query('candidate_id', 1); 
+
+//         $application = Application::find($id);
+
+//         if (!$application || $application->candidate_id !== $candidateId) {
+//             return response()->json(['message' => 'Unauthorized or application not found.'], 403);
+//         }
+
+//         $application->delete();
+
+//         return response()->json(['message' => 'Application canceled successfully.']);
+//     }
+
+//     public function updateStatus(UpdateApplicationRequest $request, $id)
+//     {
+//         $employerId = $request->query('employer_id', 2); 
+
+//         $application = Application::with('job')->find($id);
+
+//         if (!$application) {
+//             return response()->json(['message' => 'Application not found'], 404);
+//         }
+
+//         if ($application->job->employer_id !== $employerId) {
+//             return response()->json(['message' => 'Unauthorized.'], 403);
+//         }
+
+//         $application->status = $request->status;
+//         $application->save();
+
+//         return response()->json([
+//             'message' => 'Application status updated.',
+//             'data' => $application
+//         ]);
+//     }
+// }

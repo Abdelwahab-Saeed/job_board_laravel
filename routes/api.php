@@ -6,6 +6,9 @@ use App\Http\Controllers\AuthController;
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\CommentController;
+
 
 
 Route::get('/user', function (Request $request) {
@@ -31,3 +34,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 
+ Route::get('/applications/me', [ApplicationController::class, 'myApplications']);
+Route::put('/applications/{id}/status', [ApplicationController::class, 'updateStatus']);
+Route::delete('/applications/{id}/cancel', [ApplicationController::class, 'cancel']);
+Route::get('/jobs/{id}/comments', [CommentController::class, 'index']);
+Route::get('/jobs/{jobId}/comments/user/{userId}', [CommentController::class, 'indexForUser']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/jobs/{jobId}/comments', [CommentController::class, 'store']);
+    Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
+});
