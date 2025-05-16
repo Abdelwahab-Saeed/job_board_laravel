@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens;
@@ -32,9 +33,14 @@ class User extends Authenticatable
             'phone' => 'string',
         ];
     }
-    public function comments()
-{
-    return $this->hasMany(Comment::class);
-}
 
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function applications()
+    {
+        return $this->hasMany(\App\Models\Application::class, 'candidate_id');
+    }
 }
