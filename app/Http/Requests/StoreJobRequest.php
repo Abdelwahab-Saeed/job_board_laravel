@@ -8,12 +8,31 @@ use Illuminate\Validation\Rule;
 class StoreJobRequest extends FormRequest
 {
     /**
+     * Handle a failed authorization attempt.
+     *
+     * @return void
+     *
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    protected function failedAuthorization()
+    {
+        throw new \Illuminate\Http\Exceptions\HttpResponseException(
+            response()->json([
+                'success' => false,
+                'message' => 'You do not have permission to create jobs. Employer access required.',
+                'errors' => [
+                    'permissions' => ['Unauthorized action.']
+                ]
+            ], 403)
+        );
+    }
+    /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
         // You may want to adjust authorization logic based on your app's requirements
-        return true;
+        return auth()->check() && auth()->user()->role === 'employer';
     }
 
     /**

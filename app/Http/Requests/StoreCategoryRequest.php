@@ -7,11 +7,31 @@ use Illuminate\Foundation\Http\FormRequest;
 class StoreCategoryRequest extends FormRequest
 {
     /**
+     * Handle a failed authorization attempt.
+     *
+     * @return void
+     *
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    protected function failedAuthorization()
+    {
+        throw new \Illuminate\Http\Exceptions\HttpResponseException(
+            response()->json([
+                'success' => false,
+                'message' => 'You do not have permission to create categories. Admin access required.',
+                'errors' => [
+                    'permissions' => ['Unauthorized action.']
+                ]
+            ], 403)
+        );
+    }
+
+    /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;    
+        return auth()->check() && auth()->user()->role === 'admin';    
     }
 
     /**

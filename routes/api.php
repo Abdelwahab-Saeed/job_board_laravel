@@ -16,11 +16,18 @@ Route::get('/user', function (Request $request) {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+Route::get('/jobs', [JobController::class, 'index']);
+Route::get('/jobs/{id}', [JobController::class, 'show']);
+
+Route::get('/categories', [CategoryController::class, 'index']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::apiResource('jobs', JobController::class)->except('index', 'show');
+    Route::apiResource('categories', CategoryController::class)->except('index');
 });
 
-Route::apiResource('categories', CategoryController::class);
 
-Route::apiResource('jobs', JobController::class);
+
+
 
