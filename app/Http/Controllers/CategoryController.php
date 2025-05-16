@@ -50,6 +50,13 @@ class CategoryController extends Controller
      */
     public function show(string $id)
     {
+        if(!auth()->user()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthenticated'
+            ]);
+        }
+        
         $category = Category::with('jobs')->find($id);
         if(!$category) {
             return response()->json([

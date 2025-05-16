@@ -14,6 +14,7 @@ class JobController extends Controller
     public function index()
     {
         //
+        
         $jobs = Job::with('comments')->get();
 
         if($jobs->count() == 0){
@@ -36,6 +37,7 @@ class JobController extends Controller
     public function store(StoreJobRequest $request)
     {
         //
+        $request['employer_id'] = auth()->user()->id;
         $job = Job::create($request->all());
 
         return response()->json([

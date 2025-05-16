@@ -2,65 +2,73 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreCommentRequest;
-use App\Http\Requests\UpdateCommentRequest;
 use App\Models\Comment;
+use App\Models\Job;
+use Illuminate\Http\Request;
+use App\Http\Requests\StoreCommentRequest;
 
 class CommentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function store(StoreCommentRequest $request, $jobId)
     {
-        //
+        $user = auth()->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized: User not found'], 401);
+        }
+
+        $comment = Comment::create([
+            'job_id' => $jobId,
+            'user_id' => $user->id,
+            'content' => $request->content,
+        ]);
+
+        $comment->load('user');
+
+        return response()->json([
+            'message' => 'Comment added successfully',
+            'data' => $comment
+        ], 201);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function index($jobId)
     {
-        //
+        $comments = Comment::where('job_id', $jobId)
+                    ->with('user:id,name')
+                    ->get();
+
+        return response()->json([
+            'data' => $comments
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreCommentRequest $request)
+    public function indexForUser($jobId, $userId)
     {
-        //
+        $comments = Comment::where('job_id', $jobId)
+                    ->where('user_id', $userId)
+                    ->with('user:id,name')
+                    ->get();
+
+        return response()->json([
+            'data' => $comments
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Comment $comment)
+    public function destroy($id)
     {
-        //
-    }
+        $comment = Comment::find($id);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Comment $comment)
-    {
-        //
-    }
+        if (!$comment) {
+            return response()->json(['message' => 'Comment not found'], 404);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateCommentRequest $request, Comment $comment)
-    {
-        //
-    }
+        $user = auth()->user();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Comment $comment)
-    {
-        //
+        if ($user->id !== $comment->user_id && $user->role !== 'admin') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $comment->delete();
+
+        return response()->json(['message' => 'Comment deleted successfully']);
     }
 }
