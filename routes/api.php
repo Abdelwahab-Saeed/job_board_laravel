@@ -8,6 +8,15 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ApplicationController;
 
+use App\Http\Controllers\PaymentController;
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/payments/{job_id}', [PaymentController::class, 'store']);
+    Route::put('/payments/{payment}', [PaymentController::class, 'update']);
+    Route::delete('/payments/{payment}', [PaymentController::class, 'destroy']);
+});
+
+
 
 
 Route::get('/user', function (Request $request) {
@@ -30,8 +39,9 @@ Route::apiResource('jobs', JobController::class);
 
 
 
+
 Route::middleware('auth:sanctum')->group(function () {
-    // تطبيق الوظيفة
+   
     Route::post('/jobs/{jobId}/apply', [ApplicationController::class, 'apply']);
     
     Route::get('/applications/me', [ApplicationController::class, 'myApplications']);

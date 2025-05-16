@@ -6,23 +6,22 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdatePaymentRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return false;
+        
+        $payment = $this->route('payment'); 
+
+        return auth()->check()
+            && auth()->user()->role === 'employer'
+            && $payment
+            && $payment->employer_id === auth()->id();
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
-            //
+            'amount' => 'nullable|numeric|min:0',
+            'payment_method' => 'nullable|string|max:255',
         ];
     }
 }
