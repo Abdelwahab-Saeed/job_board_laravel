@@ -132,5 +132,5 @@ class JobController extends Controller
             "success" => true,
             'message' => 'Job deleted successfully',
         ]);
-    }
+        }
 }
