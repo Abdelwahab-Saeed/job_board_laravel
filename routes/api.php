@@ -8,6 +8,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\EmployerProfileController;
 
 
 use App\Http\Controllers\PaymentController;
@@ -23,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/payments/{job_id}', [PaymentController::class, 'store']);
     Route::put('/payments/{payment}', [PaymentController::class, 'update']);
     Route::delete('/payments/{payment}', [PaymentController::class, 'destroy']);
+    
 });
 
 
@@ -45,6 +47,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::apiResource('jobs', JobController::class)->except('index', 'show');
     Route::apiResource('categories', CategoryController::class)->except('index');
+    Route::get('/employers/jobs/{id}', [JobController::class, 'getEmployerJobs']);
+    Route::get('/employer-profile', [EmployerProfileController::class, 'show']);
+    Route::post('/employer-profile', [EmployerProfileController::class, 'store']);
+
 });
 
 

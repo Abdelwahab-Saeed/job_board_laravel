@@ -91,7 +91,7 @@ class JobController extends Controller
         }
 
         
-        if(auth()->user()->id !== $job->employer_id) {
+        if( (auth()->check() && auth()->user()->role === 'employer') && (auth()->user()->id !== $job->employer_id)) {
             return response()->json([
                 "success" => false,
                 'message' => 'You are not authorized to update this job',
@@ -122,7 +122,7 @@ class JobController extends Controller
             ], 404);
         }
 
-        if(auth()->user()->id !== $job->employer_id) {
+        if(auth()->user()->id !== $job->employer_id || auth()->user()->role !== 'admin') {
             return response()->json([
                 "success" => false,
                 'message' => 'You are not authorized to delete this job',
@@ -139,8 +139,6 @@ class JobController extends Controller
     }
     public function analytics($employerId)
     {
-      
-       
         $jobs = Job::where('employer_id', $employerId)->withCount('applications')->get();
     
         $totalJobs = $jobs->count();
@@ -216,5 +214,25 @@ class JobController extends Controller
         ]);
     }
     
+    public function getEmployerJobs($employerId)
+    {
+        if (auth()->user()->role !== 'employer') {
+            return response()->json([
+                'message' => 'You are not authenticated.',
+            ], 401);
+        }
+
+        $jobs = Job::where('employer_id', $employerId)->with('comments', 'category', 'employer')->get();
+
+        if ($jobs->isEmpty()) {
+            return response()->json([
+                'message' => 'You don\'t have any jobs yet.',
+            ]);
+        }
     
+        return response()->json([
+            'success' => true,
+            'data' => $jobs,
+        ]);
+    }
 }
