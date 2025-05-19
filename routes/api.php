@@ -14,7 +14,7 @@ use App\Http\Controllers\EmployerProfileController;
 use App\Http\Controllers\PaymentController;
 
 
-Route::post('/jobs/filter', [JobController::class, 'filter']);
+ Route::post('/jobs/filter', [JobController::class, 'filter']);
 
 
 Route::get('/employers/{id}/jobs/analytics', [JobController::class, 'analytics']);
@@ -41,7 +41,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/jobs', [JobController::class, 'index']);
 Route::get('/jobs/{id}', [JobController::class, 'show']);
 
-Route::get('/categories', [CategoryController::class, 'index']);
+ Route::get('/categories', [CategoryController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -71,6 +71,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 Route::middleware('auth:sanctum')->group(function () {
+   
    
     Route::post('/jobs/{jobId}/apply', [ApplicationController::class, 'apply']);
     

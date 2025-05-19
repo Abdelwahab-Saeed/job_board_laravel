@@ -13,31 +13,41 @@ class ApplicationController extends Controller
 
     public function apply(StoreApplicationRequest $request, $jobId)
     {
-        $user = auth()->user(); 
-
+        $user = auth()->user();
+    
         $existing = Application::where('candidate_id', $user->id)
             ->where('job_id', $jobId)
             ->first();
-
+    
         if ($existing) {
             return response()->json(['message' => 'You already applied to this job.'], 409);
         }
-
+    
+     
+        if (!$request->hasFile('resume_snapshot')) {
+            return response()->json(['message' => 'Resume file is required.'], 422);
+        }
+    
+        
+        $resumePath = $request->file('resume_snapshot')->store('resumes', 'public');
+    
+     
         $application = Application::create([
             'candidate_id' => $user->id,
             'job_id' => $jobId,
-            'resume_snapshot' => $request->resume_snapshot,
+            'resume_snapshot' => $resumePath,  
             'cover_letter' => $request->cover_letter,
             'contact_email' => $request->contact_email,
             'contact_phone' => $request->contact_phone,
-            'status' => 'pending', 
+            'status' => 'pending',
         ]);
-
+    
         return response()->json([
             'message' => 'Application submitted successfully.',
             'data' => $application
         ], 201);
     }
+    
 
     public function cancel($id)
     {
@@ -55,12 +65,12 @@ class ApplicationController extends Controller
     public function myApplications()
     {
         $applications = auth()->user()->applications()->with('job')->get();
-
+    
         return response()->json([
             'data' => $applications
         ]);
     }
-
+    
     public function updateStatus(UpdateApplicationRequest $request, $id)
     {
         $application = Application::with('job')->find($id);
