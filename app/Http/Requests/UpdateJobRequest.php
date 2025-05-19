@@ -8,31 +8,12 @@ use Illuminate\Validation\Rule;
 class UpdateJobRequest extends FormRequest
 {
     /**
-     * Handle a failed authorization attempt.
-     *
-     * @return void
-     *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     */
-    protected function failedAuthorization()
-    {
-        throw new \Illuminate\Http\Exceptions\HttpResponseException(
-            response()->json([
-                'success' => false,
-                'message' => 'You do not have permission to create jobs. Employer access required.',
-                'errors' => [
-                    'permissions' => ['Unauthorized action.']
-                ]
-            ], 403)
-        );
-    }
-    /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
         // You may want to adjust authorization logic based on your app's requirements
-        return auth()->check() && auth()->user()->role === 'employer';
+        return auth()->check() && auth()->user()->role === 'employer' || auth()->check() && auth()->user()->role === 'admin';
     }
 
     /**
@@ -56,7 +37,7 @@ class UpdateJobRequest extends FormRequest
             'salary_range' => ['sometimes', 'required', 'string', 'max:255'],
             'benefits' => ['sometimes', 'required', 'string'],
             'deadline' => ['sometimes', 'required', 'date', 'after:today'],
-            'status' => ['sometimes', 'required', 'string', Rule::in(['draft', 'published', 'closed'])],
+            'status' => ['sometimes', 'required', 'string', Rule::in(['pending', 'published', 'approved'])],
             'employer_id' => ['sometimes', 'required', 'integer', 'exists:employers,id'],
         ];
     }
@@ -129,7 +110,7 @@ class UpdateJobRequest extends FormRequest
             
             'status.required' => 'The job status is required',
             'status.string' => 'The status must be a text value',
-            'status.in' => 'The status must be one of: draft, published, closed',
+            'status.in' => 'The status must be one of: pending, published, approved',
             
             
             'employer_id.required' => 'The employer ID is required',

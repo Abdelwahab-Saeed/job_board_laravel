@@ -9,9 +9,7 @@ use App\Models\Job;
 
 class PaymentController extends Controller
 {
-    /**
-     * Store a new payment only if the authenticated user owns the job.
-     */
+   
     public function store(StorePaymentRequest $request, $job_id)
     {
         $job = Job::findOrFail($job_id);
@@ -34,9 +32,6 @@ class PaymentController extends Controller
         ], 201);
     }
 
-    /**
-     * Update a payment only if the authenticated user owns it.
-     */
     public function update(UpdatePaymentRequest $request, Payment $payment)
     {
         if ($payment->employer_id !== auth()->id()) {
@@ -51,9 +46,7 @@ class PaymentController extends Controller
         ]);
     }
 
-    /**
-     * Delete a payment only if the authenticated user owns it.
-     */
+  
     public function destroy(Payment $payment)
     {
         if ($payment->employer_id !== auth()->id()) {

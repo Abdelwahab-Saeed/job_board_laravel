@@ -11,7 +11,7 @@ class StoreEmployerProfileRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth()->check() && Auth()->user()->role === 'employer';
     }
 
     /**
@@ -23,6 +23,10 @@ class StoreEmployerProfileRequest extends FormRequest
     {
         return [
             //
+            "company_name" => "required|string|max:255",
+            "company_website" => "nullable|url",
+            "bio" => "required|string",
+            "company_logo" => "required|image|max:2048",
         ];
     }
 }
