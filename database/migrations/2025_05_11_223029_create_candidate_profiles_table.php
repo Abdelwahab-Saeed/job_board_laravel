@@ -14,8 +14,20 @@ return new class extends Migration
         Schema::create('candidate_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+
+            $table->string('name');
+            $table->string('email');
+            $table->string('phone');
+            $table->string('location');
+            $table->string('linkedin_profile')->nullable();
+            $table->string('title');
+            $table->string('profile_photo')->nullable();
+            $table->string('experience_level');
             $table->text('skills');
-            $table->text('experience_level');
+
+            $table->text('experience')->nullable();
+            $table->text('education')->nullable();
+
             $table->timestamps();
         });
     }

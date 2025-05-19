@@ -2,65 +2,69 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreCandidateProfileRequest;
-use App\Http\Requests\UpdateCandidateProfileRequest;
 use App\Models\CandidateProfile;
+use Illuminate\Http\Request;
 
 class CandidateProfileController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return CandidateProfile::all();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'location' => 'required|string|max:255',
+            'linkedin_profile' => 'nullable|url|max:255',
+            'title' => 'required|string|max:255',
+            'profile_photo' => 'nullable|url|max:255',
+            'experience_level' => 'required|string|max:50',
+            'skills' => 'required|string',
+            'experience' => 'nullable|string',
+            'education' => 'nullable|string',
+        ]);
+
+        CandidateProfile::create($validated);
+
+        return response()->json(['message' => 'Candidate profile added successfully'], 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreCandidateProfileRequest $request)
+    public function show($id)
     {
-        //
+        return CandidateProfile::findOrFail($id);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(CandidateProfile $candidateProfile)
+    public function update(Request $request, $id)
     {
-        //
+        $candidate = CandidateProfile::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'string|max:100',
+            'email' => "email|unique:candidate_profiles,email,{$id}",
+            'phone' => 'nullable|string',
+            'location' => 'nullable|string',
+            'linkedin_profile' => 'nullable|url',
+            'experience_level' => 'nullable|in:junior,mid,senior',
+            'title' => 'nullable|string|max:100',
+            'profile_photo' => 'nullable|url',
+            'experience' => 'nullable|string',
+            'skills' => 'nullable|string',
+            'education' => 'nullable|string',
+        ]);
+
+        $candidate->update($validated);
+        return response()->json($candidate);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(CandidateProfile $candidateProfile)
+    public function destroy($id)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateCandidateProfileRequest $request, CandidateProfile $candidateProfile)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(CandidateProfile $candidateProfile)
-    {
-        //
+        $candidate = CandidateProfile::findOrFail($id);
+        $candidate->delete();
+        return response()->json(['message' => 'Deleted successfully']);
     }
 }

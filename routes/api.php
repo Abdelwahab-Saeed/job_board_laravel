@@ -8,6 +8,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\candidate_profiles;
+
 
 
 use App\Http\Controllers\PaymentController;
@@ -54,6 +56,7 @@ Route::middleware('auth:sanctum')->group(function () {
  Route::get('/applications/me', [ApplicationController::class, 'myApplications']);
 Route::put('/applications/{id}/status', [ApplicationController::class, 'updateStatus']);
 Route::delete('/applications/{id}/cancel', [ApplicationController::class, 'cancel']);
+Route::post('/jobs/{jobId}/apply', [ApplicationController::class, 'apply']);
 Route::get('/jobs/{id}/comments', [CommentController::class, 'index']);
 Route::get('/jobs/{jobId}/comments/user/{userId}', [CommentController::class, 'indexForUser']);
 Route::middleware('auth:sanctum')->group(function () {
@@ -67,8 +70,10 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
    
     Route::post('/jobs/{jobId}/apply', [ApplicationController::class, 'apply']);
-    
+
     Route::get('/applications/me', [ApplicationController::class, 'myApplications']);
     Route::put('/applications/{id}/status', [ApplicationController::class, 'updateStatus']);
     Route::delete('/applications/{id}/cancel', [ApplicationController::class, 'cancel']);
+    Route::apiResource('candidates', CandidateProfileController::class);
+
 });
