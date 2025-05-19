@@ -66,6 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
    
+   
     Route::post('/jobs/{jobId}/apply', [ApplicationController::class, 'apply']);
     
     Route::get('/applications/me', [ApplicationController::class, 'myApplications']);
