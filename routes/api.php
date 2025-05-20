@@ -50,7 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/employers/jobs/{id}', [JobController::class, 'getEmployerJobs']);
     Route::get('/employer-profile', [EmployerProfileController::class, 'show']);
     Route::post('/employer-profile', [EmployerProfileController::class, 'store']);
-
+    Route::get('/employer/applcations/{id}', [ApplicationController::class, 'getApplicationsByEmployer'])->name('getApplicationsByEmployer', [EmployerProfileController::class, 'store']);
 });
 
 

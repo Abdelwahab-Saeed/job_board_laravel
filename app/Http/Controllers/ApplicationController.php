@@ -91,6 +91,49 @@ class ApplicationController extends Controller
             'data' => $application
         ]);
     }
+
+    public function getApplication($id)
+    {
+        $application = Application::with('job')->find($id);
+
+        if (!$application) {
+            return response()->json(['message' => 'Application not found'], 404);
+        }
+
+        if ($application->job->employer_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized.'], 403);
+        }
+
+        return response()->json([
+            'data' => $application
+        ]);
+    }
+    public function getApplicationsByJob($jobId)
+    {
+        $applications = Application::where('job_id', $jobId)->with('candidate')->get();
+
+        if ($applications->isEmpty()) {
+            return response()->json(['message' => 'No applications found for this job.'], 404);
+        }
+
+        return response()->json([
+            'data' => $applications
+        ]);
+    }
+    public function getApplicationsByEmployer($employerId)
+    {
+        $applications = Application::whereHas('job', function ($query) use ($employerId) {
+            $query->where('employer_id', $employerId);
+        })->with('user')->get();
+
+        if ($applications->isEmpty()) {
+            return response()->json(['message' => 'No applications found for this employer.'], 404);
+        }
+
+        return response()->json([
+            'data' => $applications
+        ]);
+    }   
 }
 
 

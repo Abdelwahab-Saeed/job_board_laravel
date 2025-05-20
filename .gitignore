@@ -30,3 +30,4 @@ auth.json
 .phpactor.json
 .env.backup
 .env.production
+storage/app/public/resumes/*
