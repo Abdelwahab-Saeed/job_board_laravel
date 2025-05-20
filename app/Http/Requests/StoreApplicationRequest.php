@@ -8,7 +8,7 @@ class StoreApplicationRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; 
+        return auth()->check() && auth()->user()->role === 'candidate'; 
     }
 
     public function rules(): array
