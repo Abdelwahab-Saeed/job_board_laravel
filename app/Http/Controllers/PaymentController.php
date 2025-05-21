@@ -66,4 +66,18 @@ class PaymentController extends Controller
             'message' => 'Payment deleted successfully.',
         ]);
     }
+
+    // في PaymentController.php
+public function getAllPayments()
+{
+    if (auth()->user()->role !== 'admin') {
+        return response()->json(['message' => 'Unauthorized'], 403);
+    }
+
+    $payments = Payment::with(['employer', 'job'])->get();
+
+    return response()->json([
+        'data' => $payments
+    ]);
+}
 }

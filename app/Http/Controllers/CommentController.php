@@ -71,4 +71,22 @@ class CommentController extends Controller
 
         return response()->json(['message' => 'Comment deleted successfully']);
     }
+
+public function adminDestroy($id)
+{
+    if (auth()->user()->role !== 'admin') {
+        return response()->json(['message' => 'Unauthorized'], 403);
+    }
+
+    $comment = Comment::find($id);
+
+    if (!$comment) {
+        return response()->json(['message' => 'Comment not found'], 404);
+    }
+
+    $comment->delete();
+
+    return response()->json(['message' => 'Comment deleted by admin successfully']);
 }
+}
+

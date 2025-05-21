@@ -215,6 +215,47 @@ class JobController extends Controller
             'total' => $jobs->total(),
         ]);
     }
+
+    // في JobController.php
+public function approveJob($id)
+{
+    if (auth()->user()->role !== 'admin') {
+        return response()->json(['message' => 'Unauthorized'], 403);
+    }
+
+    $job = Job::find($id);
+    if (!$job) {
+        return response()->json(['message' => 'Job not found'], 404);
+    }
+
+    $job->status = 'approved';
+    $job->save();
+
+    return response()->json([
+        'message' => 'Job approved successfully',
+        'data' => $job
+    ]);
+}
+
+public function rejectJob($id)
+{
+    if (auth()->user()->role !== 'admin') {
+        return response()->json(['message' => 'Unauthorized'], 403);
+    }
+
+    $job = Job::find($id);
+    if (!$job) {
+        return response()->json(['message' => 'Job not found'], 404);
+    }
+
+    $job->status = 'rejected';
+    $job->save();
+
+    return response()->json([
+        'message' => 'Job rejected successfully',
+        'data' => $job
+    ]);
+}
     
     
 }

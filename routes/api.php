@@ -8,7 +8,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\CommentController;
-
+use App\Http\Controllers\AdminController;
 
 use App\Http\Controllers\PaymentController;
 
@@ -71,4 +71,45 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/applications/me', [ApplicationController::class, 'myApplications']);
     Route::put('/applications/{id}/status', [ApplicationController::class, 'updateStatus']);
     Route::delete('/applications/{id}/cancel', [ApplicationController::class, 'cancel']);
+});
+ 
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::put('/admin/jobs/{id}/approve', [JobController::class, 'approveJob']);
+    Route::put('/admin/jobs/{id}/reject', [JobController::class, 'rejectJob']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/admin/jobs', [AdminController::class, 'getAllJobs']);
+    Route::get('/admin/users', [AdminController::class, 'getAllUsers']);
+    Route::get('/admin/stats', [AdminController::class, 'getPlatformStats']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::delete('/admin/comments/{id}', [CommentController::class, 'adminDestroy']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/admin/payments', [PaymentController::class, 'getAllPayments']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('categories', CategoryController::class)->except('index');
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/admin/search', [AdminController::class, 'search']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::put('/admin/users/{id}/disable', [AdminController::class, 'disableUser']);
+    Route::delete('/admin/users/{id}', [AdminController::class, 'deleteUser']);
+});
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/jobs/{job}/apply', [ApplicationController::class, 'apply']);
+    Route::get('/my-applications', [ApplicationController::class, 'myApplications']);
+    Route::delete('/applications/{id}/cancel', [ApplicationController::class, 'cancel']);
+    Route::patch('/admin/applications/{id}/status', [ApplicationController::class, 'updateStatus']);
+    Route::get('/admin/applications', [ApplicationController::class, 'index']);
+
 });

@@ -81,8 +81,21 @@ class ApplicationController extends Controller
             'data' => $application
         ]);
     }
+
+public function index()
+{
+    if (auth()->user()->role === 'admin') {
+        return response()->json(['message' => 'Unauthorized.'], 403);
+    }
+
+    $applications = Application::with(['job', 'candidate'])->latest()->get();
+
+    return response()->json([
+        'data' => $applications
+    ]);
 }
 
+}
 
 
 
