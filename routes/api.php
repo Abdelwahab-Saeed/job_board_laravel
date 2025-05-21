@@ -13,6 +13,8 @@ use App\Http\Controllers\EmployerProfileController;
 
 use App\Http\Controllers\PaymentController;
 
+use App\Http\Controllers\CandidateProfileController;
+
 
  Route::post('/jobs/filter', [JobController::class, 'filter']);
 
@@ -25,6 +27,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/payments/{payment}', [PaymentController::class, 'update']);
     Route::delete('/payments/{payment}', [PaymentController::class, 'destroy']);
     
+    Route::get('/candidates', [CandidateProfileController::class, 'index']);
+    Route::post('/candidates', [CandidateProfileController::class, 'store']);
+    Route::get('/candidates/{id}', [CandidateProfileController::class, 'show']);
+    Route::put('/candidates/{id}', [CandidateProfileController::class, 'update']);
+    Route::delete('/candidates/{id}', [CandidateProfileController::class, 'destroy']);
+    // routes/api.php
+    Route::get('/candidates/user/{userId}', [CandidateProfileController::class, 'getByUserId']);
+
 });
 
 
