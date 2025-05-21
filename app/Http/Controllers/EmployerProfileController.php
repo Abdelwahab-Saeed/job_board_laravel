@@ -32,6 +32,13 @@ class EmployerProfileController extends Controller
         $data = $request->only(['company_name', 'company_website', 'bio']);
         $data['user_id'] = Auth::id();
         
+
+        //we need to cehck if the user already has a profile
+        $existingProfile = EmployerProfile::where('user_id', Auth::id())->first();
+        if ($existingProfile) {
+            return response()->json(['message' => 'Profile already exists.'], 400);
+        }
+
         $image = $request->file('company_logo');
 
         if ($image) {
