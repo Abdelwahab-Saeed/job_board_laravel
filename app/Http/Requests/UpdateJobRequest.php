@@ -37,7 +37,7 @@ class UpdateJobRequest extends FormRequest
             'salary_range' => ['sometimes', 'required', 'string', 'max:255'],
             'benefits' => ['sometimes', 'required', 'string'],
             'deadline' => ['sometimes', 'required', 'date', 'after:today'],
-            'status' => ['sometimes', 'required', 'string', Rule::in(['pending', 'published', 'approved'])],
+            'status' => ['sometimes', 'required', 'string', Rule::in(['pending', 'published', 'closed', 'rejected'])],
             'employer_id' => ['sometimes', 'required', 'integer', 'exists:employers,id'],
         ];
     }
@@ -110,7 +110,7 @@ class UpdateJobRequest extends FormRequest
             
             'status.required' => 'The job status is required',
             'status.string' => 'The status must be a text value',
-            'status.in' => 'The status must be one of: pending, published, approved',
+            'status.in' => 'The status must be one of: pending, published, closed, rejected',
             
             
             'employer_id.required' => 'The employer ID is required',

@@ -122,18 +122,30 @@ class ApplicationController extends Controller
     }
     public function getApplicationsByEmployer($employerId)
     {
-        $applications = Application::whereHas('job', function ($query) use ($employerId) {
-            $query->where('employer_id', $employerId);
-        })->with('user')->get();
+        $perPage = request()->get('per_page', 10);
+
+        $applications = Application::whereIn('status', ['pending'])
+            ->whereHas('job', function ($query) use ($employerId) {
+                $query->where('employer_id', $employerId);
+            })
+            ->with('user', 'job')
+            ->paginate($perPage);
 
         if ($applications->isEmpty()) {
             return response()->json(['message' => 'No applications found for this employer.'], 404);
         }
 
         return response()->json([
-            'data' => $applications
+            'success' => true,
+            'data' => $applications->items(),
+            'current_page' => $applications->currentPage(),
+            'last_page' => $applications->lastPage(),
+            'per_page' => $applications->perPage(),
+            'total_applications' => $applications->total(),
+            'total_pages' => $applications->lastPage(),
         ]);
-    }   
+    }
+
 }
 
 

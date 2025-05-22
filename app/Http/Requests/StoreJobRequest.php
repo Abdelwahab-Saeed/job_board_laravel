@@ -50,12 +50,12 @@ class StoreJobRequest extends FormRequest
             'technologies' => ['required', 'string'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
             'location' => ['required', 'string', 'max:255'],
-            'experience_level' => ['required', 'string'],
+            'experience_level' => ['required', 'string', Rule::in(['entry', 'junior', 'mid', 'senior'])],
             'work_type' => ['required', 'string', Rule::in(['remote', 'onsite', 'hybrid'])],
             'salary' => ['required', 'numeric', 'min:0'],
             'benefits' => ['required', 'string'],
             'deadline' => ['required', 'date', 'after:today'],
-            'status' => ['sometimes', 'string', Rule::in(['pending', 'published', 'closed'])],
+            'status' => ['sometimes', 'string', Rule::in(['pending', 'published', 'closed', 'rejected'])],
             'employer_id' => ['sometimes', 'integer', 'exists:users,id'],
         ];
     }
@@ -104,6 +104,7 @@ class StoreJobRequest extends FormRequest
             
             'experience_level.required' => 'The experience level is required',
             'experience_level.string' => 'The experience level must be a text value',
+            'experience_level.in' => 'The experience level must be one of: entry, junior, mid, senior',
             
             
             'work_type.required' => 'The work type is required',
