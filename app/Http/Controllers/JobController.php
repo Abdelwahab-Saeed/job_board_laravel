@@ -17,27 +17,23 @@ class JobController extends Controller
      */
     
 
-    public function index(Request $request)
-    {
-        $perPage = $request->get('per_page', 5); 
-        $jobs = Job::with('comments', 'category', 'employer')->paginate($perPage);
-
-        if ($jobs->total() === 0) {
-            return response()->json([
-                'message' => "No Jobs at the time!"
-            ]);
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => $jobs->items(), // array of jobs on the current page
-            'current_page' => $jobs->currentPage(),
-            'last_page' => $jobs->lastPage(),
-            'per_page' => $jobs->perPage(),
-            'total_jobs' => $jobs->total(),
-            'total_pages' => $jobs->lastPage(),
-        ]);
-    }
+     public function index(Request $request)
+     {
+        
+         $jobs = Job::with('comments', 'category', 'employer')->get();
+     
+         if ($jobs->isEmpty()) {
+             return response()->json([
+                 'message' => "No Jobs at the time!"
+             ]);
+         }
+     
+         return response()->json([
+             'success' => true,
+             'data' => $jobs,
+         ]);
+     }
+     
 
 
     public function GetPublishedJobs()
@@ -234,6 +230,19 @@ class JobController extends Controller
             'total' => $jobs->total(),
         ]);
     }
+
+    public function getLocations()
+{
+    $locations = Job::whereNotNull('location')
+        ->where('status', 'published')
+        ->distinct()
+        ->pluck('location');
+
+    return response()->json([
+        'locations' => $locations
+    ]);
+}
+
     
     public function getEmployerJobs($employerId)
     {
@@ -243,7 +252,7 @@ class JobController extends Controller
             ], 401);
         }
 
-        $perPage = request()->get('per_page', 2); // default to 2 per page
+        $perPage = request()->get('per_page', 2); 
 
         $jobs = Job::where('employer_id', $employerId)
                     ->with('comments', 'category', 'employer')
@@ -260,6 +269,4 @@ class JobController extends Controller
             'data' => $jobs,
         ]);
     }
-
-
 }
