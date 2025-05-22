@@ -17,6 +17,7 @@ use App\Http\Controllers\CandidateProfileController;
 
 
  Route::post('/jobs/filter', [JobController::class, 'filter']);
+ Route::get('/jobs/locations', [JobController::class, 'getLocations']);
 
 
 Route::get('/employers/{id}/jobs/analytics', [JobController::class, 'analytics']);

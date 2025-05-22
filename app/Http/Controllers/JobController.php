@@ -230,6 +230,19 @@ class JobController extends Controller
             'total' => $jobs->total(),
         ]);
     }
+
+    public function getLocations()
+{
+    $locations = Job::whereNotNull('location')
+        ->where('status', 'published')
+        ->distinct()
+        ->pluck('location');
+
+    return response()->json([
+        'locations' => $locations
+    ]);
+}
+
     
     public function getEmployerJobs($employerId)
     {
@@ -239,14 +252,18 @@ class JobController extends Controller
             ], 401);
         }
 
-        $jobs = Job::where('employer_id', $employerId)->with('comments', 'category', 'employer')->get();
+        $perPage = request()->get('per_page', 2); 
+
+        $jobs = Job::where('employer_id', $employerId)
+                    ->with('comments', 'category', 'employer')
+                    ->paginate($perPage);
 
         if ($jobs->isEmpty()) {
             return response()->json([
                 'message' => 'You don\'t have any jobs yet.',
             ]);
         }
-    
+
         return response()->json([
             'success' => true,
             'data' => $jobs,
