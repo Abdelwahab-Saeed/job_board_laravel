@@ -17,27 +17,23 @@ class JobController extends Controller
      */
     
 
-    public function index(Request $request)
-    {
-        $perPage = $request->get('per_page', 5); 
-        $jobs = Job::with('comments', 'category', 'employer')->paginate($perPage);
-
-        if ($jobs->total() === 0) {
-            return response()->json([
-                'message' => "No Jobs at the time!"
-            ]);
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => $jobs->items(), // array of jobs on the current page
-            'current_page' => $jobs->currentPage(),
-            'last_page' => $jobs->lastPage(),
-            'per_page' => $jobs->perPage(),
-            'total_jobs' => $jobs->total(),
-            'total_pages' => $jobs->lastPage(),
-        ]);
-    }
+     public function index(Request $request)
+     {
+        
+         $jobs = Job::with('comments', 'category', 'employer')->get();
+     
+         if ($jobs->isEmpty()) {
+             return response()->json([
+                 'message' => "No Jobs at the time!"
+             ]);
+         }
+     
+         return response()->json([
+             'success' => true,
+             'data' => $jobs,
+         ]);
+     }
+     
 
 
     public function GetPublishedJobs()
