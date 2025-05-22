@@ -52,7 +52,7 @@ class AuthController extends Controller
         ]);
         
     
-        // Generate token if you're using API authentication
+        
         $token = $user->createToken('auth_token')->plainTextToken;
     
         return response()->json([
