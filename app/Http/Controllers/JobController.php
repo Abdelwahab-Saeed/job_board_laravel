@@ -15,38 +15,30 @@ class JobController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    
+
+    public function index(Request $request)
     {
-        //
-        $page = request()->get('page', 1);
-        $perPage = request()->get('per_page', 2);
-        $offset = ($page - 1) * $perPage;
-        $limit = $perPage;
-        $totalJobs = Job::count();
-        $currentPage = $page;
-        $lastPage = ceil($totalJobs / $perPage);
-        $totalPages = $totalJobs / $perPage;
-        $perPage = $perPage;
-        $total = $totalJobs;
-        $jobs = Job::with('comments', 'category', 'employer')->get()->slice($offset, $limit);
-        if($totalJobs == 0){
-            return response()->json(
-                [
-                    'message' => "No Jobs at the time!"
-                ]
-            );
+        $perPage = $request->get('per_page', 5); 
+        $jobs = Job::with('comments', 'category', 'employer')->paginate($perPage);
+
+        if ($jobs->total() === 0) {
+            return response()->json([
+                'message' => "No Jobs at the time!"
+            ]);
         }
 
         return response()->json([
-            "success" => true,
-            "data" => $jobs,
-            'current_page' => $currentPage,
-            'last_page' => $lastPage,
-            'per_page' => $perPage,
-            'total_jobs' => $total,
-            'total_pages' => $totalPages,
+            'success' => true,
+            'data' => $jobs->items(), // array of jobs on the current page
+            'current_page' => $jobs->currentPage(),
+            'last_page' => $jobs->lastPage(),
+            'per_page' => $jobs->perPage(),
+            'total_jobs' => $jobs->total(),
+            'total_pages' => $jobs->lastPage(),
         ]);
     }
+
 
     public function GetPublishedJobs()
     {
