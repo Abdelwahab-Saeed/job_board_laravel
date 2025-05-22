@@ -243,17 +243,23 @@ class JobController extends Controller
             ], 401);
         }
 
-        $jobs = Job::where('employer_id', $employerId)->with('comments', 'category', 'employer')->get();
+        $perPage = request()->get('per_page', 2); // default to 2 per page
+
+        $jobs = Job::where('employer_id', $employerId)
+                    ->with('comments', 'category', 'employer')
+                    ->paginate($perPage);
 
         if ($jobs->isEmpty()) {
             return response()->json([
                 'message' => 'You don\'t have any jobs yet.',
             ]);
         }
-    
+
         return response()->json([
             'success' => true,
             'data' => $jobs,
         ]);
     }
+
+
 }
