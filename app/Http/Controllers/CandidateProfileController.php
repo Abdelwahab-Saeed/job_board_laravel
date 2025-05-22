@@ -32,7 +32,7 @@ class CandidateProfileController extends Controller
                 'message' => 'Candidate profile already exists.',
                 'data' => null
             ], 409);
-        }
+        }   
 
         $profile = CandidateProfile::create($data);
 

@@ -18,10 +18,18 @@ class JobController extends Controller
     public function index()
     {
         //
-        
-        $jobs = Job::with('comments', 'category', 'employer')->get();
-
-        if($jobs->count() == 0){
+        $page = request()->get('page', 1);
+        $perPage = request()->get('per_page', 2);
+        $offset = ($page - 1) * $perPage;
+        $limit = $perPage;
+        $totalJobs = Job::count();
+        $currentPage = $page;
+        $lastPage = ceil($totalJobs / $perPage);
+        $totalPages = $totalJobs / $perPage;
+        $perPage = $perPage;
+        $total = $totalJobs;
+        $jobs = Job::with('comments', 'category', 'employer')->get()->slice($offset, $limit);
+        if($totalJobs == 0){
             return response()->json(
                 [
                     'message' => "No Jobs at the time!"
@@ -31,7 +39,12 @@ class JobController extends Controller
 
         return response()->json([
             "success" => true,
-            "data" => $jobs
+            "data" => $jobs,
+            'current_page' => $currentPage,
+            'last_page' => $lastPage,
+            'per_page' => $perPage,
+            'total_jobs' => $total,
+            'total_pages' => $totalPages,
         ]);
     }
 
