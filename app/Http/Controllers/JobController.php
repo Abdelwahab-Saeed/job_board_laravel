@@ -48,6 +48,22 @@ class JobController extends Controller
         ]);
     }
 
+    public function GetPublishedJobs()
+    {
+        $jobs = Job::where('status', 'published')->with('comments', 'category', 'employer')->get();
+
+        if ($jobs->isEmpty()) {
+            return response()->json([
+                'message' => 'No published jobs found.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $jobs,
+        ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
