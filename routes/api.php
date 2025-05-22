@@ -21,6 +21,8 @@ use App\Http\Controllers\CandidateProfileController;
 
 Route::get('/employers/{id}/jobs/analytics', [JobController::class, 'analytics']);
 
+//Publish jobs
+Route::get('/jobs/published', [JobController::class, 'GetPublishedJobs']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/payments/{job_id}', [PaymentController::class, 'store']);
@@ -51,7 +53,10 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/jobs', [JobController::class, 'index']);
 Route::get('/jobs/{id}', [JobController::class, 'show']);
 
- Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/categories', [CategoryController::class, 'index']);
+
+
+
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
