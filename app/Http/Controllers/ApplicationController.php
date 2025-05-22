@@ -29,7 +29,9 @@ class ApplicationController extends Controller
         }
     
         
-        $resumePath = $request->file('resume_snapshot')->store('resumes', 'public');
+        $resumeName = $user->name . '_' . time() . '.' . $request->file('resume_snapshot')->getClientOriginalExtension();
+$resumePath = $request->file('resume_snapshot')->storeAs('resumes', $resumeName, 'public');
+
     
      
         $application = Application::create([
@@ -120,20 +122,37 @@ class ApplicationController extends Controller
             'data' => $applications
         ]);
     }
+    // public function getApplicationsByEmployer($employerId)
+    // {
+    //     $applications = Application::whereHas('job', function ($query) use ($employerId) {
+    //         $query->where('employer_id', $employerId);
+    //     })->with('user')->get();
+
+    //     if ($applications->isEmpty()) {
+    //         return response()->json(['message' => 'No applications found for this employer.'], 404);
+    //     }
+
+    //     return response()->json([
+    //         'data' => $applications
+    //     ]);
+    // } 
+    
     public function getApplicationsByEmployer($employerId)
     {
         $applications = Application::whereHas('job', function ($query) use ($employerId) {
             $query->where('employer_id', $employerId);
-        })->with('user')->get();
-
+        })->with('user', 'job')->get();
+    
         if ($applications->isEmpty()) {
             return response()->json(['message' => 'No applications found for this employer.'], 404);
         }
-
+    
         return response()->json([
             'data' => $applications
         ]);
-    }   
+    }
+
+   
 }
 
 
