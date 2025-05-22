@@ -59,4 +59,5 @@ class PaymentController extends Controller
             'message' => 'Payment deleted successfully.',
         ]);
     }
+
 }

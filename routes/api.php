@@ -15,6 +15,11 @@ use App\Http\Controllers\PaymentController;
 
 use App\Http\Controllers\CandidateProfileController;
 
+use App\Http\Controllers\StripeController;
+
+
+Route::middleware('auth:sanctum')->post('/stripe/checkout-session/{jobId}', [StripeController::class, 'createCheckoutSession']);
+Route::post('/stripe/webhook', [StripeController::class, 'webhook']);
 
  Route::post('/jobs/filter', [JobController::class, 'filter']);
  Route::get('/jobs/locations', [JobController::class, 'getLocations']);

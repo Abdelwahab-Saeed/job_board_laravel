@@ -143,7 +143,8 @@ $resumePath = $request->file('resume_snapshot')->storeAs('resumes', $resumeName,
 
         $applications = Application::whereIn('status', ['pending'])
             ->whereHas('job', function ($query) use ($employerId) {
-                $query->where('employer_id', $employerId);
+                $query->where('employer_id', $employerId)
+                    ->where('status', '!=', 'closed'); // Add this condition
             })
             ->with('user', 'job')
             ->paginate($perPage);
@@ -151,7 +152,7 @@ $resumePath = $request->file('resume_snapshot')->storeAs('resumes', $resumeName,
         if ($applications->isEmpty()) {
             return response()->json(['message' => 'No applications found for this employer.'], 404);
         }
-    
+
         return response()->json([
             'success' => true,
             'data' => $applications->items(),
