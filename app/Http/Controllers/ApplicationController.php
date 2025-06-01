@@ -30,7 +30,7 @@ class ApplicationController extends Controller
     
         
         $resumeName = $user->name . '_' . time() . '.' . $request->file('resume_snapshot')->getClientOriginalExtension();
-$resumePath = $request->file('resume_snapshot')->storeAs('resumes', $resumeName, 'public');
+        $resumePath = $request->file('resume_snapshot')->storeAs('resumes', $resumeName, 'public');
 
     
      
